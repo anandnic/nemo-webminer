@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nemo webminer Demo</title>
+  <style>
+    :root {
+      --primary-color: #3B82F6; 
+      --primary-hover: #2563EB; 
+      --background: #F9FAFB;   
+      --card-bg: #FFFFFF;
+      --border-color: #E5E7EB;  
+      --text-primary: #1F2937;  
+      --text-secondary: #6B7280;
+      --success-bg: #D1FAE5;   
+      --success-text: #065F46; 
+      --error-bg: #FEE2E2;     
+      --error-text: #991B1B;   
+      --info-bg: #DBEAFE;      
+      --info-text: #1E40AF;    
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
+      --radius: 12px;
+      --font: 'Inter', 'Roboto', Arial, sans-serif;
+      --monospace-font: 'Fira Mono', 'Consolas', monospace;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--background);
+      font-family: var(--font);
+      min-height: 100vh;
+      color: var(--text-primary);
+      box-sizing: border-box;
+    }
+    *, *:before, *:after {
+        box-sizing: inherit;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start; 
+      min-height: 100vh;
+      padding: 2em 1em;
+    }
+    .card {
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 2em 2.5em;
+      max-width: 700px; 
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    h1 {
+      margin: 0 0 1.2em 0;
+      font-size: 1.8em;
+      font-weight: 700;
+      color: var(--primary-color);
+      text-align: center;
+    }
+    form label {
+      font-weight: 600;
+      font-size: 0.95em;
+      margin-bottom: 0.4em;
+      color: var(--text-secondary);
+      display: block;
+    }
+    input[type="url"], textarea {
+      width: 100%;
+      padding: 0.8em 1em;
+      margin-bottom: 1.2em;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1em;
+      font-family: var(--font);
+      background: #F9FAFB; 
+      transition: border 0.2s, box-shadow 0.2s;
+      color: var(--text-primary);
+      resize: vertical;
+    }
+    input[type="url"]:focus, textarea:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    textarea {
+      min-height: 60px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 0.8em;
+      margin-bottom: 1.5em;
+    }
+    button {
+      flex: 1 1 0;
+      padding: 0.8em 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: 600;
+      color: #fff;
+      background: var(--primary-color);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    button:hover:not(:disabled), button:focus:not(:disabled) {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    #msg {
+      margin-bottom: 1.5em;
+      padding: 0.8em 1.2em;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95em;
+      display: none;
+      text-align: center;
+    }
+    #msg.info { background: var(--info-bg); color: var(--info-text); display: block; }
+    #msg.success { background: var(--success-bg); color: var(--success-text); display: block; }
+    #msg.error { background: var(--error-bg); color: var(--error-text); display: block; }
+    .output-section {
+      margin-top: 0; 
+      padding: 0;
+      width: 100%; 
+    }
+    .output-section h2 {
+      font-size: 1em;
+      margin: 0 0 0.6em 0;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    pre#jsonOutput {
+      background: #F3F4F6; 
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto; 
+      white-space: pre; 
+      word-wrap: normal;
+      max-height: 350px;
+      margin: 0;
+      padding: 1em 1.2em;
+      font-size: 0.9em;
+      font-family: var(--monospace-font);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+    @media (max-width: 768px) {
+      .container { padding: 1.5em 1em; }
+      .card {
+        padding: 1.5em;
+        max-width: 95%;
+      }
+      h1 { font-size: 1.6em; }
+      button { font-size: 0.95em; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 1em 0.5em; }
+      .card { padding: 1.2em 1em; }
+      h1 { font-size: 1.4em; }
+      .btn-row { flex-direction: column; }
+      button { font-size: 0.9em; padding: 0.9em 0; }
+      input[type="url"], textarea { font-size: 0.95em; }
+      pre#jsonOutput { font-size: 0.85em; padding: 0.8em 1em; }
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Nemo WebMiner Demo</h1>
+      <form id="scrape-form">
+        <fieldset>
+          <legend>WebMiner Options</legend>
+          <div>
+            <label for="url">URL for content :</label>
+            <input id="url" name="url" type="url" required placeholder="https://example.com">
+          </div>
+          <div>
+            <label for="selectors">Selectors (Optional):</label>
+            <textarea id="selectors" name="selectors" rows="3" placeholder="e.g. h1, a, p (separated by commas)"></textarea>
+            <small>Enter comma-separated tags or blank.</small>
+          </div>
+        </fieldset>
+
+        <div class="btn-row">
+          <button type="submit" id="downloadBtn">Download XLSX</button>
+          <button type="button" id="getJsonBtn">Get JSON Data</button>
+        </div>
+      </form>
+
+      <div class="output-section">
+        <div id="msg"></div> 
+        <h2>JSON Output Preview:</h2>
+        <pre id="jsonOutput">Output will appear here...</pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('scrape-form').onsubmit = async function(e) {
+      e.preventDefault();
+      await fetchData('file');
+    };
+
+    document.getElementById('getJsonBtn').onclick = async function(e) {
+      await fetchData('json');
+    };
+
+    async function fetchData(format) {
+      const urlInput = document.getElementById('url');
+      const selectorsInput = document.getElementById('selectors');
+      const msgDiv = document.getElementById('msg');
+      const jsonOutputPre = document.getElementById('jsonOutput');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const getJsonBtn = document.getElementById('getJsonBtn');
+
+      const url = urlInput.value;
+      const selectors = selectorsInput.value;
+
+      if (!url) {
+        urlInput.focus();
+        showMessage('Please enter a URL.', 'error');
+        return;
+      }
+
+     
+      setLoading(true);
+      showMessage('Processing request...', 'info');
+      jsonOutputPre.textContent = ''; 
+
+      const res = await fetch('/webminer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, selectors, format })
+      });
+
+      setLoading(false); 
+      if (!res.ok) {
+        const errText = await res.text();
+        showMessage(`Error ${res.status}: ${errText}`, 'error');
+        jsonOutputPre.textContent = 'Error occurred.';
+      } else {
+        if (format === 'json') {
+          const jsonData = await res.json();
+          jsonOutputPre.textContent = JSON.stringify(jsonData, null, 2);
+          showMessage('JSON data received successfully.', 'success');
+        } else {
+          const blob = await res.blob();
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          let filename = 'scraped_data.xlsx';
+          const disposition = res.headers.get('Content-Disposition');
+          if (disposition && disposition.indexOf('attachment') !== -1) {
+            const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            const match = disposition.match(filenameRegex);
+            if (match) {
+              filename = match[1].replace(/['"]/g, '');
+            }
+          }
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          showMessage(`File '${filename}' download initiated.`, 'success');
+          jsonOutputPre.textContent = 'XLSX file generated and download started.';
+        }
+      }
+    }
+
+    function showMessage(message, type = 'info') {
+      const msgDiv = document.getElementById('msg');
+      msgDiv.textContent = message;
+      msgDiv.className = type; 
+    }
+
+    function setLoading(isLoading) {
+      const downloadBtn = document.getElementById('downloadBtn');
+      const getJsonBtn = document.getElementById('getJsonBtn');
+      downloadBtn.disabled = isLoading;
+      getJsonBtn.disabled = isLoading;
+    }
+  </script>
+</body>
+</html>
