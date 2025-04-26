@@ -1,6 +1,6 @@
 {
   "name": "nemo-webminer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Nemo-webminer is a Node.js toolkit for scraping content from any website.",
   "main": "dist/index.js",
   "exports": {
@@ -26,7 +26,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ananddey/nemo-webminer.git"
+    "url": "https://github.com/anandnic/nemo-webminer.git"
   },
   "peerDependencies": {
     "playwright": ">=1.30.0",
